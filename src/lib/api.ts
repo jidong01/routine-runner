@@ -161,7 +161,7 @@ export async function getLastSuccessfulRun(userId: string): Promise<number | nul
     .not('run_actual_km', 'is', null)
     .order('date', { ascending: false })
     .limit(1)
-    .single();
+    .maybeSingle();
 
   if (error || !data) {
     return null;

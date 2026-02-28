@@ -23,6 +23,11 @@ self.addEventListener('activate', (event) => {
 });
 
 self.addEventListener('fetch', (event) => {
+  // Only handle http/https requests
+  if (!event.request.url.startsWith('http')) {
+    return;
+  }
+
   // Network-first for API calls
   if (event.request.url.includes('supabase')) {
     event.respondWith(fetch(event.request));

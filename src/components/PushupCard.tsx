@@ -134,9 +134,9 @@ export default function PushupCard({ record, sets, user, onRecordUpdate, onSetsU
   // REST DAY view
   if (!isPushupDay) {
     return (
-      <div className="rounded-2xl p-3 bg-gray-900 border border-gray-800">
+      <div className="rounded-2xl p-5 bg-gray-900 border border-gray-800">
         <div className="flex items-center justify-between">
-          <h2 className="text-base font-semibold">푸쉬업</h2>
+          <h2 className="text-lg font-semibold">푸쉬업</h2>
           <span className="text-xs font-medium px-2 py-1 rounded-full bg-gray-800 text-gray-400">
             휴식일
           </span>
@@ -154,15 +154,15 @@ export default function PushupCard({ record, sets, user, onRecordUpdate, onSetsU
   };
 
   return (
-    <div className={`rounded-2xl p-3 transition-colors ${
+    <div className={`rounded-2xl p-5 transition-colors ${
       isCompleted ? "bg-green-950/50 border border-green-800/50" :
       completedSets > 0 ? "bg-blue-950/50 border border-blue-800/50" :
       "bg-gray-900 border border-gray-800"
     }`}>
       {/* Header */}
-      <div className="flex items-center justify-between mb-2">
+      <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
-          <h2 className="text-base font-semibold">푸쉬업</h2>
+          <h2 className="text-lg font-semibold">푸쉬업</h2>
           <span className="text-xs text-gray-500">W{record.pushup_week}·S{record.pushup_session}</span>
           <span className={`text-sm font-bold ${
             isCompleted ? "text-green-400" :
@@ -222,7 +222,7 @@ export default function PushupCard({ record, sets, user, onRecordUpdate, onSetsU
               key={set.id}
               onClick={() => isActive && handleCompleteSet(set)}
               disabled={!isActive || saving}
-              className={`flex-1 flex flex-col items-center py-2 rounded-xl transition-all ${
+              className={`flex-1 flex flex-col items-center py-3 rounded-xl transition-all ${
                 isCurrentSetDone
                   ? "bg-green-900/30 border border-green-800/30"
                   : isActive
@@ -230,7 +230,7 @@ export default function PushupCard({ record, sets, user, onRecordUpdate, onSetsU
                   : "bg-gray-800/50 border border-gray-800 opacity-50"
               }`}
             >
-              <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold ${
+              <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${
                 isCurrentSetDone
                   ? "bg-green-600 text-white"
                   : isActive

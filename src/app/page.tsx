@@ -162,7 +162,7 @@ export default function Home() {
 
   return (
     <>
-      <div className="space-y-2 pb-14">
+      <div className="space-y-4 pb-16">
         {activeTab === "today" ? (
           <>
             <div className="relative">

@@ -37,14 +37,14 @@ export default function DopamineCard({ record, streak, onUpdate }: DopamineCardP
   const displayStreak = isSuccess ? streak + 1 : streak;
 
   return (
-    <div className={`rounded-2xl p-3 transition-colors ${
+    <div className={`rounded-2xl p-5 transition-colors ${
       isSuccess ? "bg-green-950/50 border border-green-800/50" :
       isFail ? "bg-red-950/50 border border-red-800/50" :
       "bg-gray-900 border border-gray-800"
     }`}>
-      <div className="flex items-center justify-between mb-2">
+      <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
-          <h2 className="text-base font-semibold">도파민 디톡스</h2>
+          <h2 className="text-lg font-semibold">도파민 디톡스</h2>
           {displayStreak > 0 && (
             <span className="text-xs font-bold text-green-400 bg-green-900/50 px-1.5 py-0.5 rounded-full">
               D+{displayStreak}
@@ -60,11 +60,11 @@ export default function DopamineCard({ record, streak, onUpdate }: DopamineCardP
         )}
       </div>
 
-      <div className="flex gap-2">
+      <div className="flex gap-3">
         <button
           onClick={() => handleStatus("success")}
           disabled={saving}
-          className={`flex-1 py-2 rounded-xl text-sm font-semibold transition-all active:scale-95 ${
+          className={`flex-1 py-3.5 rounded-xl text-base font-semibold transition-all active:scale-95 ${
             isSuccess
               ? "bg-green-600 text-white shadow-lg shadow-green-900/50"
               : "bg-gray-800 text-gray-300 hover:bg-gray-700"
@@ -75,7 +75,7 @@ export default function DopamineCard({ record, streak, onUpdate }: DopamineCardP
         <button
           onClick={() => handleStatus("fail")}
           disabled={saving}
-          className={`flex-1 py-2 rounded-xl text-sm font-semibold transition-all active:scale-95 ${
+          className={`flex-1 py-3.5 rounded-xl text-base font-semibold transition-all active:scale-95 ${
             isFail
               ? "bg-red-600 text-white shadow-lg shadow-red-900/50"
               : "bg-gray-800 text-gray-300 hover:bg-gray-700"

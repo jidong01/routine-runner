@@ -37,12 +37,12 @@ export default function RunningCard({ record, onUpdate }: RunningCardProps) {
   };
 
   return (
-    <div className={`rounded-2xl p-5 transition-colors ${
+    <div className={`rounded-2xl p-4 transition-colors ${
       isCompleted ? "bg-green-950/50 border border-green-800/50" :
       hasRecord ? "bg-orange-950/50 border border-orange-800/50" :
       "bg-gray-900 border border-gray-800"
     }`}>
-      <div className="flex items-center justify-between mb-4">
+      <div className="flex items-center justify-between mb-2">
         <h2 className="text-lg font-semibold">달리기</h2>
         {hasRecord && (
           <span className={`text-xs font-medium px-2 py-1 rounded-full ${
@@ -54,13 +54,13 @@ export default function RunningCard({ record, onUpdate }: RunningCardProps) {
       </div>
 
       {/* Target distance - hero display */}
-      <div className={`text-center p-4 rounded-xl mb-4 ${
+      <div className={`text-center p-2.5 rounded-xl mb-3 ${
         isCompleted ? "bg-green-900/30 border border-green-800/30" :
         hasRecord ? "bg-orange-900/20 border border-orange-800/30" :
         "bg-gray-800/50 border border-gray-700/50"
       }`}>
         <p className="text-gray-400 text-xs mb-1">오늘 목표</p>
-        <p className={`text-4xl font-black tracking-tight ${
+        <p className={`text-3xl font-black tracking-tight ${
           isCompleted ? "text-green-400" :
           hasRecord ? "text-orange-400" :
           "text-blue-400"
@@ -91,13 +91,13 @@ export default function RunningCard({ record, onUpdate }: RunningCardProps) {
               value={distance}
               onChange={(e) => setDistance(e.target.value)}
               placeholder="0.0"
-              className="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3.5 text-lg font-medium text-white placeholder-gray-600 focus:outline-none focus:border-blue-500 transition-colors"
+              className="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-2.5 text-lg font-medium text-white placeholder-gray-600 focus:outline-none focus:border-blue-500 transition-colors"
             />
           </div>
           <button
             onClick={handleSave}
             disabled={saving || !distance}
-            className={`px-6 py-3.5 rounded-xl font-semibold transition-all active:scale-95 ${
+            className={`px-6 py-2.5 rounded-xl font-semibold transition-all active:scale-95 ${
               saving || !distance
                 ? "bg-gray-800 text-gray-500 cursor-not-allowed"
                 : "bg-blue-600 text-white hover:bg-blue-500"

@@ -35,7 +35,7 @@ export default function RootLayout({
       </head>
       <body className="bg-gray-950 text-gray-100 antialiased">
         <ServiceWorkerRegistrar />
-        <main className="min-h-screen max-w-md mx-auto px-4 py-6 pb-20">
+        <main className="min-h-screen max-w-md mx-auto px-4 py-3 pb-6">
           {children}
         </main>
       </body>

@@ -17,9 +17,9 @@ export default function Header({ completedCount, totalCount }: HeaderProps) {
   const allDone = completedCount === totalCount;
 
   return (
-    <div className="text-center mb-6">
+    <div className="text-center mb-2">
       <p className="text-gray-400 text-sm">{dateStr}</p>
-      <div className="mt-3 flex items-center justify-center gap-3">
+      <div className="mt-1 flex items-center justify-center gap-3">
         {/* Progress circles */}
         <div className="flex gap-1.5">
           {Array.from({ length: totalCount }).map((_, i) => (
@@ -33,11 +33,11 @@ export default function Header({ completedCount, totalCount }: HeaderProps) {
             />
           ))}
         </div>
-        <span className={`text-2xl font-black ${allDone ? "text-green-400" : "text-white"}`}>
+        <span className={`text-xl font-black ${allDone ? "text-green-400" : "text-white"}`}>
           {completedCount}/{totalCount}
         </span>
       </div>
-      <p className={`text-xs mt-1.5 ${allDone ? "text-green-500 font-medium" : "text-gray-600"}`}>
+      <p className={`text-xs mt-0.5 ${allDone ? "text-green-500 font-medium" : "text-gray-600"}`}>
         {allDone ? "오늘 루틴 완료!" : "끊기지 않는 게 목표"}
       </p>
     </div>

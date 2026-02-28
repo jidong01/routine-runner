@@ -10,8 +10,8 @@ interface WeeklySummaryProps {
 
 export default function WeeklySummary({ summary }: WeeklySummaryProps) {
   return (
-    <div className="rounded-2xl p-5 bg-gray-900 border border-gray-800 mt-6">
-      <h3 className="text-sm font-semibold text-gray-400 mb-3">이번 주 요약</h3>
+    <div className="rounded-2xl p-3 bg-gray-900 border border-gray-800 mt-3">
+      <h3 className="text-sm font-semibold text-gray-400 mb-2">이번 주 요약</h3>
       <div className="grid grid-cols-3 gap-3">
         <div className="text-center">
           <p className="text-xl font-bold text-white">{summary.totalRunKm}<span className="text-xs text-gray-500 ml-0.5">km</span></p>

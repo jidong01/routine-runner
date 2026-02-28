@@ -12,6 +12,8 @@ import PushupCard from "@/components/PushupCard";
 import WeeklySummary from "@/components/WeeklySummary";
 import OnboardingModal from "@/components/OnboardingModal";
 import LoginScreen from "@/components/LoginScreen";
+import BottomNav from "@/components/BottomNav";
+import CalendarView from "@/components/CalendarView";
 
 export default function Home() {
   const [user, setUser] = useState<User | null>(null);
@@ -28,6 +30,7 @@ export default function Home() {
   const [error, setError] = useState<string | null>(null);
   const [authReady, setAuthReady] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [activeTab, setActiveTab] = useState<"today" | "calendar">("today");
 
   const loadData = useCallback(async () => {
     try {
@@ -158,48 +161,53 @@ export default function Home() {
   if (isPushupDay && record.pushup_completed) completedRoutines++;
 
   return (
-    <div className="space-y-2">
-      <div className="relative">
-        <Header
-          completedCount={completedRoutines}
-          totalCount={totalRoutines}
-        />
-        <button
-          onClick={async () => { await signOut(); }}
-          className="absolute top-0 right-0 text-gray-600 text-xs hover:text-gray-400 py-1 px-2"
-        >
-          로그아웃
-        </button>
+    <>
+      <div className="space-y-2 pb-14">
+        {activeTab === "today" ? (
+          <>
+            <div className="relative">
+              <Header
+                completedCount={completedRoutines}
+                totalCount={totalRoutines}
+              />
+              <button
+                onClick={async () => { await signOut(); }}
+                className="absolute top-0 right-0 text-gray-600 text-xs hover:text-gray-400 py-1 px-2"
+              >
+                로그아웃
+              </button>
+            </div>
+
+            <DopamineCard
+              record={record}
+              streak={streak}
+              onUpdate={(updated) => {
+                setRecord(updated);
+                if (updated.dopamine_status === "success") {
+                  setStreak((prev) => prev + 1);
+                }
+              }}
+            />
+
+            <RunningCard
+              record={record}
+              onUpdate={(updated) => setRecord(updated)}
+            />
+
+            <PushupCard
+              record={record}
+              sets={pushupSets}
+              user={user}
+              onRecordUpdate={(updated) => setRecord(updated)}
+              onSetsUpdate={(updated) => setPushupSets(updated)}
+            />
+
+          </>
+        ) : (
+          <CalendarView userId={user.id} />
+        )}
       </div>
-
-      <DopamineCard
-        record={record}
-        streak={streak}
-        onUpdate={(updated) => {
-          setRecord(updated);
-          // Update streak if success
-          if (updated.dopamine_status === "success") {
-            setStreak((prev) => prev + 1);
-          }
-        }}
-      />
-
-      <RunningCard
-        record={record}
-        onUpdate={(updated) => setRecord(updated)}
-      />
-
-      <PushupCard
-        record={record}
-        sets={pushupSets}
-        user={user}
-        onRecordUpdate={(updated) => setRecord(updated)}
-        onSetsUpdate={(updated) => setPushupSets(updated)}
-      />
-
-      {weeklySummary && (
-        <WeeklySummary summary={weeklySummary} />
-      )}
-    </div>
+      <BottomNav activeTab={activeTab} onTabChange={setActiveTab} />
+    </>
   );
 }

@@ -540,3 +540,31 @@ export function clearTimerState(): void {
   if (typeof window === 'undefined') return;
   localStorage.removeItem(TIMER_STATE_KEY);
 }
+
+// ============================================================
+// Monthly Records (Calendar)
+// ============================================================
+
+export async function getMonthlyRecords(
+  userId: string,
+  year: number,
+  month: number,
+): Promise<DailyRecord[]> {
+  const startDate = `${year}-${String(month).padStart(2, '0')}-01`;
+  const lastDay = new Date(year, month, 0).getDate();
+  const endDate = `${year}-${String(month).padStart(2, '0')}-${String(lastDay).padStart(2, '0')}`;
+
+  const { data, error } = await supabase()
+    .from('daily_records')
+    .select('*')
+    .eq('user_id', userId)
+    .gte('date', startDate)
+    .lte('date', endDate)
+    .order('date', { ascending: true });
+
+  if (error) {
+    throw new Error(`Failed to fetch monthly records: ${error.message}`);
+  }
+
+  return (data ?? []) as DailyRecord[];
+}

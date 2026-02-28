@@ -20,6 +20,8 @@ export default function PushupCard({ record, sets, user, onRecordUpdate, onSetsU
   const isPushupDay = record.pushup_week !== null && record.pushup_session !== null;
   const isCompleted = record.pushup_completed;
   const completedSets = sets.filter(s => s.completed).length;
+  const totalTargetReps = sets.reduce((sum, s) => sum + s.target_reps, 0);
+  const completedReps = sets.filter(s => s.completed).reduce((sum, s) => sum + s.target_reps, 0);
 
   // Find the current active set (first uncompleted)
   const currentSetIndex = sets.findIndex(s => !s.completed);
@@ -158,24 +160,37 @@ export default function PushupCard({ record, sets, user, onRecordUpdate, onSetsU
       "bg-gray-900 border border-gray-800"
     }`}>
       {/* Header */}
-      <div className="flex items-center justify-between mb-4">
+      <div className="flex items-center justify-between mb-2">
         <div>
           <h2 className="text-lg font-semibold">푸쉬업</h2>
           <p className="text-gray-400 text-xs mt-0.5">
             Week {record.pushup_week} · Session {record.pushup_session}
           </p>
         </div>
-        <div className="text-right">
-          {isCompleted ? (
-            <span className="text-xs font-medium px-2 py-1 rounded-full bg-green-900/50 text-green-400">
-              완료
-            </span>
-          ) : (
-            <span className="text-sm text-gray-400">
-              {completedSets} / 5 세트
-            </span>
-          )}
-        </div>
+        {isCompleted ? (
+          <span className="text-xs font-medium px-2 py-1 rounded-full bg-green-900/50 text-green-400">
+            완료
+          </span>
+        ) : (
+          <span className="text-sm text-gray-400">
+            {completedSets} / 5 세트
+          </span>
+        )}
+      </div>
+
+      {/* Today's target summary */}
+      <div className={`text-center p-3 rounded-xl mb-4 ${
+        isCompleted ? "bg-green-900/30 border border-green-800/30" :
+        completedSets > 0 ? "bg-blue-900/20 border border-blue-800/30" :
+        "bg-gray-800/50 border border-gray-700/50"
+      }`}>
+        <p className="text-gray-400 text-xs mb-1">오늘 총 목표</p>
+        <p className={`text-3xl font-black tracking-tight ${
+          isCompleted ? "text-green-400" :
+          completedSets > 0 ? "text-blue-400" : "text-white"
+        }`}>
+          {isCompleted ? totalTargetReps : completedReps}<span className="text-gray-500 text-lg font-semibold">/{totalTargetReps}개</span>
+        </p>
       </div>
 
       {/* Progress bar */}

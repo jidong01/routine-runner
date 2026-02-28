@@ -158,7 +158,7 @@ export default function Home() {
   if (isPushupDay && record.pushup_completed) completedRoutines++;
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-2">
       <div className="relative">
         <Header
           completedCount={completedRoutines}

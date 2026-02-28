@@ -9,7 +9,6 @@ function supabase() {
 // Constants
 // ============================================================
 
-const USER_ID_KEY = 'routine_runner_user_id';
 const TIMER_STATE_KEY = 'routine_runner_timer_state';
 
 // Pushup program: 7 levels, each level has 5 sets of target reps
@@ -76,45 +75,58 @@ function calculatePushupWeekSession(
 // ============================================================
 
 /**
- * Get the existing user from localStorage + DB, or create a new anonymous user.
- * The user record is created directly in the DB (no Supabase Auth).
- * RLS policies must allow anon inserts/selects for this to work,
- * or RLS should be disabled / using service-role in dev.
+ * Get the currently authenticated user's profile from the users table.
+ * The users row is auto-created by a DB trigger on auth.users insert.
  */
-export async function getOrCreateUser(): Promise<User> {
-  if (typeof window === 'undefined') {
-    throw new Error('getOrCreateUser must be called in a browser context');
-  }
+export async function getCurrentUser(): Promise<User | null> {
+  const { data: { user: authUser } } = await supabase().auth.getUser();
+  if (!authUser) return null;
 
-  const storedId = localStorage.getItem(USER_ID_KEY);
-
-  if (storedId) {
-    const { data, error } = await supabase()
-      .from('users')
-      .select('*')
-      .eq('id', storedId)
-      .single();
-
-    if (!error && data) {
-      return data as User;
-    }
-    // Stored ID is stale - fall through to create a new user
-    localStorage.removeItem(USER_ID_KEY);
-  }
-
-  // Create a new user row; DB generates the UUID via gen_random_uuid()
   const { data, error } = await supabase()
     .from('users')
-    .insert({})
-    .select()
+    .select('*')
+    .eq('id', authUser.id)
     .single();
 
-  if (error || !data) {
-    throw new Error(`Failed to create user: ${error?.message ?? 'unknown error'}`);
-  }
-
-  localStorage.setItem(USER_ID_KEY, data.id);
+  if (error || !data) return null;
   return data as User;
+}
+
+/**
+ * Sign in with email magic link
+ */
+export async function signInWithEmail(email: string): Promise<{ error: string | null }> {
+  const redirectTo = typeof window !== 'undefined'
+    ? `${window.location.origin}/auth/callback`
+    : undefined;
+
+  const { error } = await supabase().auth.signInWithOtp({
+    email,
+    options: { emailRedirectTo: redirectTo },
+  });
+
+  return { error: error?.message ?? null };
+}
+
+/**
+ * Sign out
+ */
+export async function signOut(): Promise<void> {
+  await supabase().auth.signOut();
+}
+
+/**
+ * Get auth state
+ */
+export async function getSession() {
+  return await supabase().auth.getSession();
+}
+
+/**
+ * Listen to auth state changes
+ */
+export function onAuthStateChange(callback: (event: string, session: any) => void) {
+  return supabase().auth.onAuthStateChange(callback);
 }
 
 export async function updateUserSettings(

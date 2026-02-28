@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { getOrCreateUser, getOrCreateTodayRecord, getDopamineStreak, getWeeklySummary, getPushupSets, createPushupSets } from "@/lib/api";
+import { getCurrentUser, getOrCreateTodayRecord, getDopamineStreak, getWeeklySummary, getPushupSets, createPushupSets, onAuthStateChange, signOut } from "@/lib/api";
 import { getPushupSession } from "@/data/pushup-program";
 import type { User, DailyRecord, PushupSetRecord } from "@/lib/types";
 import type { PushupLevel } from "@/data/pushup-program";
@@ -11,6 +11,7 @@ import RunningCard from "@/components/RunningCard";
 import PushupCard from "@/components/PushupCard";
 import WeeklySummary from "@/components/WeeklySummary";
 import OnboardingModal from "@/components/OnboardingModal";
+import LoginScreen from "@/components/LoginScreen";
 
 export default function Home() {
   const [user, setUser] = useState<User | null>(null);
@@ -25,14 +26,23 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [authReady, setAuthReady] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   const loadData = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
 
-      const userData = await getOrCreateUser();
+      const userData = await getCurrentUser();
+      if (!userData) {
+        setIsAuthenticated(false);
+        setLoading(false);
+        return;
+      }
+
       setUser(userData);
+      setIsAuthenticated(true);
 
       // Check if user needs onboarding (no pushup start date means not set up yet)
       if (!userData.pushup_program_start_date) {
@@ -76,13 +86,39 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    loadData();
+    const { data: { subscription } } = onAuthStateChange((event) => {
+      if (event === 'SIGNED_IN') {
+        loadData();
+      } else if (event === 'SIGNED_OUT') {
+        setUser(null);
+        setRecord(null);
+        setIsAuthenticated(false);
+      }
+      setAuthReady(true);
+    });
+
+    // Initial load
+    loadData().then(() => setAuthReady(true));
+
+    return () => subscription.unsubscribe();
   }, [loadData]);
 
   const handleOnboardingComplete = useCallback(() => {
     setShowOnboarding(false);
     loadData();
   }, [loadData]);
+
+  if (!authReady) {
+    return (
+      <div className="flex items-center justify-center min-h-[60vh]">
+        <div className="w-8 h-8 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
+
+  if (!isAuthenticated && !loading) {
+    return <LoginScreen />;
+  }
 
   if (loading) {
     return (
@@ -123,10 +159,18 @@ export default function Home() {
 
   return (
     <div className="space-y-4">
-      <Header
-        completedCount={completedRoutines}
-        totalCount={totalRoutines}
-      />
+      <div className="relative">
+        <Header
+          completedCount={completedRoutines}
+          totalCount={totalRoutines}
+        />
+        <button
+          onClick={async () => { await signOut(); }}
+          className="absolute top-0 right-0 text-gray-600 text-xs hover:text-gray-400 py-1 px-2"
+        >
+          로그아웃
+        </button>
+      </div>
 
       <DopamineCard
         record={record}

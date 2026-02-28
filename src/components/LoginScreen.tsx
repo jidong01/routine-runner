@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { signInWithEmail } from "@/lib/api";
+import { signInWithEmail, signInAnonymously } from "@/lib/api";
 
 export default function LoginScreen() {
   const [email, setEmail] = useState("");
@@ -90,9 +90,35 @@ export default function LoginScreen() {
         </button>
       </form>
 
-      <p className="text-center text-gray-600 text-xs mt-6">
-        비밀번호 없이 이메일 링크로 로그인합니다<br />
-        처음이면 자동으로 계정이 생성됩니다
+      <div className="flex items-center gap-3 my-5">
+        <div className="flex-1 h-px bg-gray-800" />
+        <span className="text-gray-600 text-xs">또는</span>
+        <div className="flex-1 h-px bg-gray-800" />
+      </div>
+
+      <button
+        onClick={async () => {
+          setLoading(true);
+          setError(null);
+          const result = await signInAnonymously();
+          if (result.error) {
+            setError(result.error);
+          }
+          setLoading(false);
+        }}
+        disabled={loading}
+        className={`w-full py-4 rounded-xl text-base font-semibold transition-all active:scale-95 ${
+          loading
+            ? "bg-gray-800 text-gray-500 cursor-not-allowed"
+            : "bg-gray-800 text-gray-300 border border-gray-700 hover:bg-gray-700"
+        }`}
+      >
+        {loading ? "처리 중..." : "게스트로 시작하기"}
+      </button>
+
+      <p className="text-center text-gray-600 text-xs mt-5">
+        게스트는 이 기기에서만 사용 가능합니다<br />
+        이메일 로그인 시 다른 기기에서도 동기화됩니다
       </p>
     </div>
   );

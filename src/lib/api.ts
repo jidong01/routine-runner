@@ -109,6 +109,14 @@ export async function signInWithEmail(email: string): Promise<{ error: string | 
 }
 
 /**
+ * Sign in anonymously (guest mode)
+ */
+export async function signInAnonymously(): Promise<{ error: string | null }> {
+  const { error } = await supabase().auth.signInAnonymously();
+  return { error: error?.message ?? null };
+}
+
+/**
  * Sign out
  */
 export async function signOut(): Promise<void> {

@@ -1,4 +1,4 @@
-const CACHE_NAME = 'routine-runner-v1';
+const CACHE_NAME = 'routine-runner-v2';
 const STATIC_ASSETS = [
   '/',
   '/manifest.json',
@@ -28,28 +28,32 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Network-first for API calls
-  if (event.request.url.includes('supabase')) {
-    event.respondWith(fetch(event.request));
+  // Network-first for API calls and Next.js chunks
+  if (event.request.url.includes('supabase') || event.request.url.includes('/_next/')) {
+    event.respondWith(
+      fetch(event.request).catch(() => caches.match(event.request))
+    );
     return;
   }
 
-  // Cache-first for static assets
+  // Network-first for navigation, cache-first for static assets only
+  if (event.request.mode === 'navigate') {
+    event.respondWith(
+      fetch(event.request).catch(() => caches.match('/'))
+    );
+    return;
+  }
+
+  // Cache-first for truly static assets (icons, manifest)
   event.respondWith(
     caches.match(event.request).then((cached) => {
       return cached || fetch(event.request).then((response) => {
-        // Cache successful responses
         if (response.status === 200) {
           const responseClone = response.clone();
           caches.open(CACHE_NAME).then((cache) => cache.put(event.request, responseClone));
         }
         return response;
       });
-    }).catch(() => {
-      // Fallback for navigation requests
-      if (event.request.mode === 'navigate') {
-        return caches.match('/');
-      }
-    })
+    }).catch(() => undefined)
   );
 });
